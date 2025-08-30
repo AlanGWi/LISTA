@@ -296,6 +296,19 @@ parseCSVCategorias(csv) {
 
   seleccionarCategoria(categoria) {
     this.categoriaSeleccionada = categoria;
+
+
+       // Forzar scroll al inicio del contenedor principal
+    this.$nextTick(() => {
+      const container = document.querySelector('main');
+      if (container) {
+        container.scrollTo({
+          top: 0,
+          behavior: 'smooth' // animación suave
+        });
+      }
+    });
+    
   }
 },
 
