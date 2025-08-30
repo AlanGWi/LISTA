@@ -77,7 +77,7 @@
     <!-- Botón flotante del carrito -->
     <button 
       class="btn btn-primary rounded-circle position-fixed"
-      style="bottom: 20px; right: 20px; width: 40px; height: 40px; font-size: 24px;"
+      style="bottom: 20px; right: 20px; width: 60px; height: 60px; font-size: 24px;"
       data-bs-toggle="modal" 
       data-bs-target="#carritoModal"
     >
@@ -86,7 +86,7 @@
       <span 
         v-if="carrito.length" 
         class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
-        style="font-size: 15px;"
+        style="font-size: 14px;"
       >
         {{ carrito.length }}
       </span>
