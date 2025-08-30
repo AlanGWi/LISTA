@@ -74,55 +74,50 @@
 
 
     <div>
-    <!-- Botón flotante del carrito -->
-    <button 
-      class="btn btn-primary rounded-circle position-fixed"
-      style="bottom: 20px; right: 20px; width: 60px; height: 60px; font-size: 24px;"
-      data-bs-toggle="modal" 
-      data-bs-target="#carritoModal"
-    >
-      🛒
-      <!-- Badge de cantidad -->
-      <span 
-        v-if="carrito.length" 
-        class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
-        style="font-size: 14px;"
-      >
-        {{ carrito.length }}
-      </span>
-    </button>
+   <!-- Botón flotante del carrito --> 
+<button 
+  id="botonCarrito"
+  class="btn btn-primary rounded-circle position-fixed"
+  data-bs-toggle="modal" 
+  data-bs-target="#carritoModal"
+>
+  🛒
+  <!-- Badge de cantidad -->
+  <span 
+    v-if="carrito.length" 
+    class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+  >
+    {{ carrito.length }}
+  </span>
+</button>
 
-    <!-- Modal del carrito -->
-    <div class="modal fade" id="carritoModal" tabindex="-1" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title">🛒 Tu carrito</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-          </div>
-          <div class="modal-body">
-            <ul v-if="carrito.length" class="list-group mb-3">
-              <li 
-                v-for="(p, i) in carrito" 
-                :key="i" 
-                class="list-group-item d-flex justify-content-between align-items-center"
-              >
-                {{ p.nombre }}
-                <span class="text-success fw-bold">{{ p.precio }}</span>
-
-
-                  <button 
+<!-- Modal del carrito -->
+<div class="modal fade" id="carritoModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">🛒 Tu carrito</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <ul v-if="carrito.length" class="list-group mb-3">
+          <li 
+            v-for="(p, i) in carrito" 
+            :key="i" 
+            class="list-group-item d-flex justify-content-between align-items-center"
+          >
+            {{ p.nombre }}
+            <span class="text-success fw-bold">{{ p.precio }}</span>
+            <button 
               class="btn btn-danger btn-sm" 
               @click="eliminarDelCarrito(i)"
             >
               🗑
             </button>
-              </li>
-            </ul>
+          </li>
+        </ul>
 
-
-
-                   <!-- Nueva sección: Envío o Retiro -->
+        <!-- Nueva sección: Envío o Retiro -->
         <div v-if="carrito.length" class="mt-3">
           <h6 class="fw-bold">📦 Método de entrega</h6>
           <div class="form-check">
@@ -149,20 +144,19 @@
               Envío a domicilio
             </label>
           </div>
-          </div>
-
-            
-            <p v-else class="text-center">Tu carrito está vacío</p>
-          </div>
-          <div class="modal-footer" v-if="carrito.length">
-            <button class="btn btn-success w-100" @click="enviarCarritoWhatsApp">
-              Enviar pedido por WhatsApp
-            </button>
-          </div>
         </div>
+
+        <p v-else class="text-center">Tu carrito está vacío</p>
+      </div>
+      <div class="modal-footer" v-if="carrito.length">
+        <button class="btn btn-success w-100" @click="enviarCarritoWhatsApp">
+          Enviar pedido por WhatsApp
+        </button>
       </div>
     </div>
   </div>
+</div>
+</div>
       
              <button class="btn btn-secondary mb-4" @click="categoriaSeleccionada = null">
             Volver a categorías
@@ -351,6 +345,88 @@ main.flex-grow-1 {
 
 my-footer {
   flex-shrink: 0; /* nunca se encoge */
+}
+
+
+
+/* Botón flotante del carrito */
+#botonCarrito {
+  bottom: 20px;
+  right: 20px;
+  width: 60px;
+  height: 60px;
+  font-size: 24px;
+  z-index: 1050;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  transition: transform 0.2s;
+}
+
+#botonCarrito:hover {
+  transform: scale(1.1);
+}
+
+/* Badge de cantidad */
+#botonCarrito .badge {
+  font-size: 14px;
+  padding: 0.25em 0.5em;
+}
+
+/* Pantallas pequeñas (móviles) */
+@media (max-width: 576px) {
+  #botonCarrito {
+    width: 50px;
+    height: 50px;
+    font-size: 20px;
+  }
+  #botonCarrito .badge {
+    font-size: 12px;
+  }
+  #carritoModal .modal-dialog {
+    max-width: 95%;
+  }
+}
+
+/* Pantallas medianas (tablets) */
+@media (min-width: 577px) and (max-width: 992px) {
+  #botonCarrito {
+    width: 70px;
+    height: 70px;
+    font-size: 26px;
+  }
+  #botonCarrito .badge {
+    font-size: 14px;
+  }
+  #carritoModal .modal-dialog {
+    max-width: 80%;
+  }
+}
+
+/* Pantallas grandes (laptops y desktops) */
+@media (min-width: 993px) {
+  #botonCarrito {
+    width: 80px;
+    height: 80px;
+    font-size: 28px;
+  }
+  #botonCarrito .badge {
+    font-size: 16px;
+    padding: 0.3em 0.6em;
+  }
+  #carritoModal .modal-dialog {
+    max-width: 600px;
+  }
+}
+
+/* Modal body con scroll si hay muchos productos */
+#carritoModal .modal-body {
+  max-height: 60vh;
+  overflow-y: auto;
+}
+
+/* List items flexibles */
+#carritoModal ul.list-group li {
+  flex-wrap: wrap;
+  gap: 0.5rem;
 }
 
 </style>
