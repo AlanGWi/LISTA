@@ -158,7 +158,7 @@
 </div>
 </div>
       
-             <button class="btn btn-secondary mb-4" @click="categoriaSeleccionada = null">
+             <button class="btn btn-secondary mb-4" @click="volverACategorias">
             Volver a categorías
           </button>
             </div>
@@ -309,7 +309,15 @@ parseCSVCategorias(csv) {
       }
     });
     
-  }
+  },
+
+  volverACategorias() {
+  this.categoriaSeleccionada = null;
+  this.$nextTick(() => {
+    const container = document.querySelector('main');
+    if (container) container.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+}
 },
 
 };
