@@ -4,9 +4,11 @@
 
       <!-- Redes sociales -->
       <section class="mb-4">
-        <a class="btn btn-outline-light btn-floating m-1" href="#"><i class="fab fa-facebook-f"></i></a>
-        <a class="btn btn-outline-light btn-floating m-1" href="#"><i class="fab fa-google"></i></a>
-        <a class="btn btn-outline-light btn-floating m-1" href="#"><i class="fab fa-instagram"></i></a>
+        <a class="btn btn-outline-light btn-floating m-1" href="https://www.facebook.com/cristian.w.w"><i class="fab fa-facebook-f"></i></a>
+        <a class="btn btn-outline-light btn-floating m-1" href="https://www.instagram.com/zuhaus_wistuba/"><i class="fab fa-instagram"></i></a>
+          <a class="btn btn-outline-light btn-floating m-1" href="https://wa.me/56984415834">
+    <i class="fab fa-whatsapp"></i>
+  </a>
       </section>
 
       <!-- Información de contacto -->
@@ -14,15 +16,15 @@
         <div class="container text-center text-md-start mt-5">
           <div class="row mt-3">
             <div class="col-md-3 col-lg-4 col-xl-3 mx-auto mb-4">
-              <h6 class="text-uppercase fw-bold mb-4"><i class="fas fa-gem me-3"></i>Restaurante</h6>
-              <p>Descripción breve o mensaje institucional.</p>
+              <h6 class="text-uppercase fw-bold mb-4"><i class="fas fa-gem me-3"></i>Zhuaus</h6>
+              <p>Compromiso con la frescura, la calidad y la tradición en cada producto que ofrecemos.</p>
             </div>
             <div class="col-md-4 col-lg-3 col-xl-3 mx-auto mb-md-0 mb-4">
               <h6 class="text-uppercase fw-bold mb-4">Contacto</h6>
-              <p><i class="fas fa-home me-3"></i> Puerto Montt, Kito123, Chile</p>
-              <p><i class="fas fa-envelope me-3"></i> kito@hotmail.com</p>
-              <p><i class="fas fa-phone me-3"></i> + 56921212121</p>
-              <p><i class="fas fa-print me-3"></i> + 56931312121</p>
+              <p><i class="fas fa-home me-3"></i> Eulogio Goycolea 540,Calbuco, Chile</p>
+              <p><i class="fas fa-envelope me-3"></i> cristianw@gmail.com</p>
+              <p><i class="fas fa-phone me-3"></i> + 56984415834</p>
+           
             </div>
           </div>
         </div>
@@ -44,33 +46,8 @@
 
 
 <style scoped>
-textarea,
-input,
-select {
-  margin-bottom: 10px;
-}
-.comentario-carousel {
-  display: flex;
-  overflow-x: auto;
-  padding-bottom: 10px;
-  scroll-snap-type: x mandatory;
-  -webkit-overflow-scrolling: touch;
-}
 
-.comentario-card {
-  min-width: 250px;
-  scroll-snap-align: start;
-  flex-shrink: 0;
-  border-radius: 10px;
-}
 
-/* Opcional: ocultar scrollbar en algunos navegadores */
-.comentario-carousel::-webkit-scrollbar {
-  display: none;
-}
-.comentario-carousel {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
+
 </style>
 

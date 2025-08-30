@@ -1,163 +1,272 @@
 <template>
-  <my-nabvar></my-nabvar>
-  <div class="container my-5">
-    <h1 class="text-center mb-4"> Lista de Precios</h1>
+  <div id="app">
+    <my-nabvar></my-nabvar>
 
-    <!-- Iterar categorías -->
-    <div v-for="(productos, categoria) in lista" :key="categoria" class="mb-5">
-      <h2 class="mb-3 text-primary">{{ categoria }}</h2>
+    <main class="flex-grow-1">
+      <div class="container my-5">
+        <h1 class="text-center mb-4">Lista de productos</h1>
 
-      <div class="row">
-        <div
-          v-for="(item, index) in productos"
-          :key="index"
-          class="col-md-4 mb-3"
-        >
-       <div class="card h-100 shadow-sm">
-  <img 
-    v-if="item.imagen" 
-    :src="item.imagen" 
-    class="card-img-top" 
-    alt="Imagen de {{ item.nombre }}"
-  />
-  <div class="card-body">
-    <h5 class="card-title">{{ item.nombre }}</h5>
-    <p class="card-text text-muted">{{ item.descripcion }}</p>
-  </div>
-  <div class="card-footer text-end">
-    <span class="fw-bold text-success">{{ item.precio }}</span>
-  </div>
-</div>
+        <!-- Categorías -->
+        <div v-if="!categoriaSeleccionada" class="row">
+          <div 
+            v-for="(productos, categoria) in lista" 
+            :key="categoria" 
+            class="col-md-4 mb-4"
+          >
+            <div class="card h-100 shadow-sm" @click="seleccionarCategoria(categoria)" style="cursor: pointer;">
+              <img 
+                v-if="imagenesCategorias[categoria]" 
+                :src="imagenesCategorias[categoria]" 
+                class="card-img-top img-fixed" 
+                :alt="categoria"
+              />
+              <div class="card-body text-center">
+                <h5 class="card-title">{{ categoria }}</h5>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Productos de categoría -->
+
+        
+        <div v-else>
+
+          <nav aria-label="breadcrumb" class="mb-3">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item">
+      <a href="#" @click.prevent="categoriaSeleccionada = null">Categorías</a>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page">
+      {{ categoriaSeleccionada }}
+    </li>
+  </ol>
+</nav>
+
+         
+          <h2 class="mb-3 text-primary">{{ categoriaSeleccionada }}</h2>
+
+          <div class="row">
+            <div
+              v-for="(item, index) in lista[categoriaSeleccionada]"
+              :key="index"
+              class="col-md-4 mb-3"
+            >
+              <div class="card h-100 shadow-sm">
+                <img 
+                  v-if="item.imagen" 
+                  :src="item.imagen" 
+                  class="card-img-top img-fixed" 
+                  :alt="item.nombre"
+                />
+                <div class="card-body">
+                  <h5 class="card-title">{{ item.nombre }}</h5>
+                  <p class="card-text text-muted">{{ item.descripcion }}</p>
+                </div>
+                <div class="card-footer text-end">
+                  <span class="fw-bold text-success">{{ item.precio }}</span>
+                </div>
+                 <button class="btn btn-sm btn-primary ms-2" @click="agregarAlCarrito(item)">
+            Agregar carrito
+          </button>
+              </div>
+          </div>
+
+
+    <div>
+    <!-- Botón flotante del carrito -->
+    <button 
+      class="btn btn-primary rounded-circle position-fixed"
+      style="bottom: 40px; right: 40px; width: 90px; height: 90px; font-size: 30px;"
+      data-bs-toggle="modal" 
+      data-bs-target="#carritoModal"
+    >
+      🛒
+      <!-- Badge de cantidad -->
+      <span 
+        v-if="carrito.length" 
+        class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+        style="font-size: 30px;"
+      >
+        {{ carrito.length }}
+      </span>
+    </button>
+
+    <!-- Modal del carrito -->
+    <div class="modal fade" id="carritoModal" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">🛒 Tu carrito</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+            <ul v-if="carrito.length" class="list-group mb-3">
+              <li 
+                v-for="(p, i) in carrito" 
+                :key="i" 
+                class="list-group-item d-flex justify-content-between align-items-center"
+              >
+                {{ p.nombre }}
+                <span class="text-success fw-bold">{{ p.precio }}</span>
+
+
+                  <button 
+              class="btn btn-danger btn-sm" 
+              @click="eliminarDelCarrito(i)"
+            >
+              🗑
+            </button>
+              </li>
+            </ul>
+
+            
+            <p v-else class="text-center">Tu carrito está vacío</p>
+          </div>
+          <div class="modal-footer" v-if="carrito.length">
+            <button class="btn btn-success w-100" @click="enviarCarritoWhatsApp">
+              Enviar pedido por WhatsApp
+            </button>
+          </div>
         </div>
       </div>
     </div>
   </div>
-  <my-footer></my-footer>
+      
+             <button class="btn btn-secondary mb-4" @click="categoriaSeleccionada = null">
+            Volver a categorías
+          </button>
+            </div>
+        </div>
+
+      </div>
+    </main>
+
+    <my-footer></my-footer>
+  </div>
 </template>
-
 <script>
-
 import MyFooter from '@/components/FooterVue.vue';
 import MyNabvar from '@/components/HederView.vue';
 
 export default {
   name: "ListaPrecios",
-
-  components:{
-  MyFooter,
- MyNabvar
+  components: { MyFooter, MyNabvar },
+data() {
+  return {
+    categoriaSeleccionada: null,
+    lista: {}, // Se llenará con los productos desde Google Sheets
+    imagenesCategorias: {}, // Se llenará con la otra hoja
+    carrito: []   // ✅ Aquí inicializas el carrito
+  };
 },
-  data() {
-    return {
-  lista: {
-  "Pescados y Mariscos": [
-    { nombre: "Centolla 500 grs", descripcion: "Al Vacio sin Glaseo del Seno de Reloncavi", precio: "$12.000", imagen: "" },
-    { nombre: "Jaiba 500 grs", descripcion: "Sin Glaseo Solo Carne", precio: "$9.000", imagen: "" },
-    { nombre: "Salmon sin Espinas al vacio kg", descripcion: "", precio: "$12.500", imagen: "" },
-    { nombre: "Trucha de Rio Arcoiris kg", descripcion: "", precio: "$15.000", imagen: "" },
-  ],
+mounted() {
+  this.cargarDatos();
+},
+methods: {
 
-  "Conservas Artesanales": [
-    { nombre: "Locos Enteros", descripcion: "Machacados y cocidos lt", precio: "$22.500", imagen: "" },
-    { nombre: "Locos trozados", descripcion: "Machacados y Cocidos lt", precio: "$19.500", imagen: "" },
-    { nombre: "Pulpos", descripcion: "Machacados y Cocidos lt", precio: "$14.500", imagen: "" },
-    { nombre: "Lengua de Culenes", descripcion: "Aceite Laurel Pimienta", precio: "$4.500", imagen: "" },
-    { nombre: "Picorocos", descripcion: "Aceite Laurel Pimienta", precio: "$4.500", imagen: "" },
-    { nombre: "Caracol Locate", descripcion: "Aceite Laurel Pimienta", precio: "$5.200", imagen: "" },
-    { nombre: "Erizos", descripcion: "Aceite Laurel Pimienta", precio: "$5.200", imagen: "" },
-    { nombre: "Navajuelas", descripcion: "Aceite Laurel Pimienta picor Medio", precio: "$4.200", imagen: "" },
-    { nombre: "Piures", descripcion: "Al Natural", precio: "$4.200", imagen: "" },
-    { nombre: "Pasta de Salmon", descripcion: "Aceite Laurel Pimienta picor Medio", precio: "$4.700", imagen: "" },
-    { nombre: "Pasta de Cholgas", descripcion: "Aceite Laurel Pimienta picor Medio", precio: "$3.300", imagen: "" },
-    { nombre: "Pasta de Surtido de Mariscos", descripcion: "Laurel Pimienta Picor Medio", precio: "$3.500", imagen: "" },
-    { nombre: "Cholgas Banquete enteras", descripcion: "Aceite Laurel y Pimienta", precio: "$3.300", imagen: "" },
-    { nombre: "Choritos Selecionados Esp", descripcion: "Aceite Laurel y Pimienta", precio: "$3.200", imagen: "" },
-    { nombre: "Pejerrey", descripcion: "Aceite Laurel y Pimienta Picor Medio", precio: "$3.200", imagen: "" },
-    { nombre: "Choro Zapato Rubio", descripcion: "Aceite Pimienta Laurel", precio: "$4.200", imagen: "" },
-    { nombre: "Choro Zapato Negro", descripcion: "Aceite Pimienta Laurel", precio: "$4.200", imagen: "" },
-  ],
-
-  "Pastas de Ajo": [
-    { nombre: "Pasta de Ajo ahumado", descripcion: "120 grs", precio: "$2.900", imagen: "" },
-    { nombre: "Pasta de Ajo ahumado Miel", descripcion: "120 grs", precio: "$2.900", imagen: "" },
-    { nombre: "Pasta de Ajo ahumado a las Finas Hierbas", descripcion: "", precio: "$2.900", imagen: "" },
-    { nombre: "Pasta de Ajo ahumado Merken", descripcion: "", precio: "$2.900", imagen: "" },
-    { nombre: "Pasta de Ajo Negro Fermentacion Lenta 30 dias", descripcion: "", precio: "$5.500", imagen: "" },
-    { nombre: "Pasta de Ajo Negro Fermentacion Lenta 30 dias Murta", descripcion: "", precio: "$5.500", imagen: "" },
-    { nombre: "Pasta de Ajo Negro Fermentacion Lenta 30 dias Maqui", descripcion: "", precio: "$5.500", imagen: "" },
-    { nombre: "Concentrado Gotario ajo Negro Fermentacion lenta 30 dias", descripcion: "", precio: "$7.000", imagen: "" },
-    { nombre: "Ajo Chilote a Granel", descripcion: "", precio: "$6.000", imagen: "" },
-  ],
-
-  "Huevos Gallinas Libres": [
-    { nombre: "Huevo Super Extra 65 a 75 grs", descripcion: "Bandeja 30 uni", precio: "$9.000", imagen: "" },
-    { nombre: "Huevo Jumbo 76 a 90 grs", descripcion: "Bandeja 20 uni", precio: "$7.800", imagen: "" },
-  ],
-
-  "Abejas": [
-    { nombre: "Polen pote 200 grs Ulmo", descripcion: "", precio: "$4.000", imagen: "" },
-    { nombre: "Miel de Ulmo kg Ralun", descripcion: "", precio: "$5.000", imagen: "" },
-    { nombre: "Miel de Tiaca Cochamo", descripcion: "", precio: "$5.500", imagen: "" },
-    { nombre: "Cera de abeja kg", descripcion: "Para Carpintero, Zapatero, Cosmetica", precio: "$15.000", imagen: "" },
-    { nombre: "Caja Miel y 4 Velas", descripcion: "", precio: "$11.000", imagen: "" },
-  ],
-
-  "Quesos y Lacteos": [
-    { nombre: "Leche entera Proteina A2", descripcion: "No Reconstituida", precio: "$2.700", imagen: "" },
-    { nombre: "Mantequilla 100 crema de leche 250 grs", descripcion: "", precio: "$2.450", imagen: "" },
-    { nombre: "Mantequilla Sal rosada 250 grs", descripcion: "", precio: "$2.500", imagen: "" },
-    { nombre: "Mantequilla A2 250 grs", descripcion: "", precio: "$3.200", imagen: "" },
-    { nombre: "Queso Mantecoso Madurado", descripcion: "", precio: "$8.000", imagen: "" },
-    { nombre: "Queso Mantecoso Madurado Oregano", descripcion: "", precio: "$9.500", imagen: "" },
-    { nombre: "Queso Mantecoso Madurado Albahaca", descripcion: "", precio: "$9.500", imagen: "" },
-    { nombre: "Queso Mantecoso Madurado Merken", descripcion: "", precio: "$9.500", imagen: "" },
-    { nombre: "Queso Mantecoso Madurado Llanero", descripcion: "", precio: "$9.000", imagen: "" },
-    { nombre: "Queso Parmesano Pasta, Ensaladas y Pizzas", descripcion: "", precio: "$8.000", imagen: "" },
-  ],
-
-  "Charcuteria y Cecinas": [
-    { nombre: "Longanicilla 250 a 350 grs", descripcion: "Ahumada a leña Reducida en Condimentos", precio: "$3.800", imagen: "" },
-    { nombre: "Longaniza 450 gs", descripcion: "Receta de Familia Reducida en grasas a las Finas hierbas Ahumado en Leña 3 uni", precio: "$5.800", imagen: "" },
-    { nombre: "Longaniza Campo 400 grs", descripcion: "Receta de Familia Reducida en grasas a las Finas hierbas Ahumado en Leña 4 uni", precio: "$5.600", imagen: "" },
-    { nombre: "Chorizo Parrillero 300 grs", descripcion: "Tamaño Justo ChoriPan 4 uni", precio: "$5.400", imagen: "" },
-    { nombre: "Longaniza Alemana Salchicha Germana Bratwurst 450 grs", descripcion: "3 uni", precio: "$5.200", imagen: "" },
-    { nombre: "Arrollado de Huaso chileno 250 a 300 grs", descripcion: "Con o sin aji", precio: "$5.100", imagen: "" },
-    { nombre: "Arrollado Medallon Parrillero 300 grs", descripcion: "Con o sin aji", precio: "$5.100", imagen: "" },
-    { nombre: "Pate de Campo Cerdo 150 grs", descripcion: "", precio: "$1.750", imagen: "" },
-    { nombre: "Gordas Salchicha Germana 400 grs 4 uni", descripcion: "", precio: "$5.200", imagen: "" },
-    { nombre: "Vienesas Artesanles 450 grs", descripcion: "Aprox, Materias Primas Seleccionadas ahumado a leña 6 uni", precio: "$5.100", imagen: "" },
-  ],
-
-  "Sales y Aliños": [
-    { nombre: "Sal Parrillera Carmenere 450 grs", descripcion: "", precio: "$4.200", imagen: "" },
-    { nombre: "Sal Parrillera Cerveza 450 grs", descripcion: "", precio: "$4.200", imagen: "" },
-    { nombre: "Sal Parrillera Pimienta 450 grs", descripcion: "", precio: "$4.200", imagen: "" },
-    { nombre: "Salmuera Vinagre Manzana 470 ml", descripcion: "", precio: "$7.500", imagen: "" },
-    { nombre: "Salmuera humo Miel 470 ml", descripcion: "", precio: "$7.500", imagen: "" },
-    { nombre: "Salmuera Merken 470 ml", descripcion: "", precio: "$7.500", imagen: "" },
-    { nombre: "Salmuera Finas Hierbas 470 ml", descripcion: "", precio: "$7.500", imagen: "" },
-    { nombre: "Salsas para adobar 300 grs Chimichurri", descripcion: "", precio: "$3.700", imagen: "" },
-    { nombre: "Salsas para adobar 300 grs barbeque bbq", descripcion: "", precio: "$3.700", imagen: "" },
-    { nombre: "Mortero Sal Rosada 3 kg", descripcion: "", precio: "$19.000", imagen: "" },
-    { nombre: "Sal Molino 5 Pimientas 65 grs", descripcion: "", precio: "$4.200", imagen: "" },
-    { nombre: "Garra de Acero Para Carnes", descripcion: "", precio: "$8.000", imagen: "" },
-  ],
-
-  "Pecheras, Bolsos, Mandil y Billeteras": [
-    { nombre: "Pechera Reno Café", descripcion: "Porta cuchillo y Bolsillo MultiMuliuso 47x72 cms", precio: "$29.000", imagen: "" },
-    { nombre: "Pechera Encerada Reno engresada Café", descripcion: "Porta cuchillo y Bolsillo MultiMuliuso 47x72 cms cuello regulable argolla", precio: "$32.500", imagen: "" },
-    { nombre: "Pechera de Cuero Liso Rosada", descripcion: "Bolsillo Multiuso, Porta Cuchillo, Cuello Regulable, Argolla 47x72", precio: "$32.500", imagen: "" },
-    { nombre: "Bolso Porta Cuchillo 4 uni Cuero Liso 40x42", descripcion: "", precio: "$23.500", imagen: "" },
-    { nombre: "Bolso porta Cuchillo 46uni Cuero Liso 40x46", descripcion: "", precio: "$31.500", imagen: "" },
-    { nombre: "Porta Cerveza Manos libres Cuero Liso", descripcion: "", precio: "$12.500", imagen: "" },
-    { nombre: "Porta Cerveza Cinturon Cuero Liso Café", descripcion: "", precio: "$12.500", imagen: "" },
-    { nombre: "Mandil Bolsillo Multiuso Porta cuchillo, Argolla, 2 Ojetillos Metal 45x55 cms", descripcion: "", precio: "$31.500", imagen: "" },
-    { nombre: "Neceser Viajero 22 cms x 10 cms", descripcion: "", precio: "$25.000", imagen: "" },
-    { nombre: "Billetera Cuero 4 espacios +1", descripcion: "", precio: "$15.500", imagen: "" },
-  ]
-}
-    };
+eliminarDelCarrito(index) {
+    this.carrito.splice(index, 1);
   },
+
+
+    agregarAlCarrito(item) {
+    this.carrito.push(item)
+  },
+  enviarCarritoWhatsApp() {
+    if (!this.carrito.length) {
+      alert("Tu carrito está vacío")
+      return
+    }
+
+    // Texto con productos
+    const productosTexto = this.carrito
+      .map(p => `${p.nombre} - ${p.precio}`)
+      .join("%0A") // %0A = salto de línea en URL
+
+    // Total
+    const total = this.carrito.reduce((sum, p) => {
+      const precio = parseInt(p.precio.replace(/\D/g, "")) || 0
+      return sum + precio
+    }, 0)
+
+    // Mensaje final
+    const mensaje = `Nuevo pedido:%0A${productosTexto}%0A%0ATotal: $${total}`
+
+    // Número destino (cambia con código país, ej: Chile +56)
+    const numero = "+56984415834"
+
+    const url = `https://wa.me/${numero}?text=${mensaje}`
+    window.open(url, "_blank")
+  },
+  async cargarDatos() {
+    try {
+      // URL pública de tus hojas en formato CSV
+      const urlProductos = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRxcOW3Hgc-AhzNqZ_sAZ_Mssov8PCHPTqBeRxxzKeNMbY6YGlT2Jy5K1FBTWhEXL6iN_0QdPzIv8yO/pub?output=csv&t="+ Date.now();
+      const urlCategorias = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQFKecgjBfBjTE9wNMzSfevo-wzMn50dv2YPdGQ5LPuK0UFc1xKHXSHGUutkQVs4lHU9RfVKltaheu1/pub?gid=0&single=true&output=csv&t="+ Date.now();
+
+      // 1. Obtener productos
+      const resProd = await fetch(urlProductos);
+      const textProd = await resProd.text();
+      this.lista = this.parseCSVProductos(textProd);
+
+      // 2. Obtener categorías (imágenes)
+      const resCat = await fetch(urlCategorias);
+      const textCat = await resCat.text();
+      this.imagenesCategorias = this.parseCSVCategorias(textCat);
+
+    } catch (error) {
+      console.error("Error cargando datos de Google Sheets:", error);
+    }
+  },
+
+  // Convierte CSV de productos en objeto { categoria: [items] }
+parseCSVProductos(csv) {
+  const rows = csv.split("\n").map(r => r.split(","));
+  const data = rows.slice(1);
+
+  const lista = {};
+  data.forEach(row => {
+    if (row.length < 5) return; // evitar filas vacías
+    const categoria = row[0].trim();
+    const nombre = row[1].trim();
+    const descripcion = row[2].trim();
+    const precio = row[3].trim();
+    const imagen = row[4].trim();
+
+    if (!lista[categoria]) lista[categoria] = [];
+    lista[categoria].push({ nombre, descripcion, precio, imagen });
+  });
+  return lista;
+},
+
+  // Convierte CSV de categorías en objeto { categoria: urlImagen }
+parseCSVCategorias(csv) {
+  const rows = csv
+    .split("\n")
+    .map(r => r.split(","))
+    .filter(row => row.length >= 2); // Ignorar filas que no tengan al menos 2 columnas
+
+  // Ignorar headers si es que tu CSV tiene fila de títulos
+  const data = rows.slice(1);
+
+  const categorias = {};
+  data.forEach(row => {
+    const categoria = row[0]?.trim();
+    const imagen = row[1]?.trim();
+    if (categoria && imagen) {
+      categorias[categoria] = imagen;
+    }
+  });
+
+  return categorias;
+},
+
+  seleccionarCategoria(categoria) {
+    this.categoriaSeleccionada = categoria;
+  }
+},
+
 };
 </script>
 
@@ -170,4 +279,40 @@ export default {
   color: #2c3e50;
   
 }
+</style>
+
+
+<style>
+#app {
+  font-family: Avenir, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-align: center;
+  color: #2c3e50;
+  
+}
+
+
+#app {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh; /* ocupa toda la altura de la pantalla */
+}
+
+main.flex-grow-1 {
+  flex: 1 0 auto; /* crece para empujar el footer abajo */
+}
+
+.img-fixed {
+  width: 100%;
+  height: 200px; /* ajusta a la altura que quieras */
+  object-fit: cover; /* recorta y mantiene proporción */
+  border-radius: 8px; /* opcional: bordes redondeados */
+}
+
+
+my-footer {
+  flex-shrink: 0; /* nunca se encoge */
+}
+
 </style>

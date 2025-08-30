@@ -1,7 +1,7 @@
 <template>
   <nav class="navbar navbar-dark bg-dark">
     <div class="container-fluid">
-      <span class="navbar-brand fw-bold">Restaurante</span>
+      <span class="navbar-brand fw-bold">Zhuaus</span>
     </div>
   </nav>
 </template>
