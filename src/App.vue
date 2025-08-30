@@ -120,6 +120,37 @@
               </li>
             </ul>
 
+
+
+                   <!-- Nueva sección: Envío o Retiro -->
+        <div v-if="carrito.length" class="mt-3">
+          <h6 class="fw-bold">📦 Método de entrega</h6>
+          <div class="form-check">
+            <input 
+              class="form-check-input" 
+              type="radio" 
+              id="retiro" 
+              value="retiro" 
+              v-model="metodoEntrega"
+            >
+            <label class="form-check-label" for="retiro">
+              Retiro en local
+            </label>
+          </div>
+          <div class="form-check">
+            <input 
+              class="form-check-input" 
+              type="radio" 
+              id="envio" 
+              value="envio" 
+              v-model="metodoEntrega"
+            >
+            <label class="form-check-label" for="envio">
+              Envío a domicilio
+            </label>
+          </div>
+          </div>
+
             
             <p v-else class="text-center">Tu carrito está vacío</p>
           </div>
@@ -157,7 +188,8 @@ data() {
     categoriaSeleccionada: null,
     lista: {}, // Se llenará con los productos desde Google Sheets
     imagenesCategorias: {}, // Se llenará con la otra hoja
-    carrito: []   // ✅ Aquí inicializas el carrito
+    carrito: [] ,  // ✅ Aquí inicializas el carrito
+    metodoEntrega: "" 
   };
 },
 mounted() {
@@ -179,6 +211,12 @@ eliminarDelCarrito(index) {
       return
     }
 
+
+      if (!this.metodoEntrega) {
+    alert("⚠️ Por favor selecciona si quieres Retiro o Envío.");
+    return;
+  }
+
     // Texto con productos
     const productosTexto = this.carrito
       .map(p => `${p.nombre} - ${p.precio}`)
@@ -191,7 +229,7 @@ eliminarDelCarrito(index) {
     }, 0)
 
     // Mensaje final
-    const mensaje = `Nuevo pedido:%0A${productosTexto}%0A%0ATotal: $${total}`
+     const mensaje = `Nuevo pedido:%0A${productosTexto}%0A%0ATotal: $${total}%0AEntrega: ${this.metodoEntrega === 'envio' ? 'Envío a domicilio' : 'Retiro en local'}`;
 
     // Número destino (cambia con código país, ej: Chile +56)
     const numero = "+56984415834"
