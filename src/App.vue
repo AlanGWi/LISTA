@@ -358,7 +358,7 @@ main.flex-grow-1 {
 
 .img-fixed {
   width: 100%;
-  height: 200px; /* ajusta a la altura que quieras */
+  height: 300px; /* ajusta a la altura que quieras */
   object-fit: cover; /* recorta y mantiene proporción */
   border-radius: 8px; /* opcional: bordes redondeados */
 }
